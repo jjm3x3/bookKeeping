@@ -1,10 +1,15 @@
 package bookKeeping;
 
+import java.util.Optional;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -19,14 +24,18 @@ public class AppMain extends Application {
 	@Override
 	public void start(Stage firstStage) throws Exception {
 		Button btn = new Button();
-		btn.setText("sayHI to brenna");
+		btn.setText("Add an account");
 		btn.setOnAction(new EventHandler<ActionEvent>(){
 
 			@Override
 			public void handle(ActionEvent arg0) {
 				System.out.println("Hi brenna");
-				// TODO Auto-generated method stub
 				
+				Dialog alert = new Alert(Alert.AlertType.INFORMATION,"some account was added",ButtonType.OK);
+				Optional<ButtonType> result = alert.showAndWait();
+				if (result.isPresent() && result.get() == ButtonType.OK) {
+					System.out.println("so the account was finalized now");
+				}
 			}
 			
 		});
