@@ -42,7 +42,7 @@ public class AppMain extends Application {
 				Optional<ButtonType> result = alert.showAndWait();
 				if (result.isPresent() ) {
 //						result.get() 
-					System.out.println("so the account was finalized now" + result.get());
+					System.out.println("so the account was finalized now with result: " + result.get());
 				}
 			}
 			
@@ -66,16 +66,27 @@ public class AppMain extends Application {
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 
-			Button okButton = new Button();
+			TextField nameField = new TextField();
+			nameField.setPromptText("Account Name");
+			TextField startAmountBox = new TextField();
+			startAmountBox.setPromptText("set start amount");
+
+			ButtonType okButtonType =  new ButtonType("OK");
+			node.getButtonTypes().add(okButtonType);
+
+			Button okButton = (Button) node.lookupButton(okButtonType);
+//			 = new Button();
 			okButton.setText("ok");
 			okButton.setOnAction(new EventHandler<ActionEvent>(){
 				@Override
 				public void handle(ActionEvent arg0) {
+					System.out.println("account name is: " + nameField.getText());
+					System.out.println("with starting amount: " + startAmountBox.getText());
 					AddAccountDialog.this.hide();
 				}
 			});
-			TextField nameField = new TextField();
-			TextField startAmountBox = new TextField();
+
+			// build ui
 			gridPane.add(nameField, 0, 0);
 			gridPane.add(startAmountBox, 0, 1);
 			gridPane.add(okButton, 0, 2);
@@ -83,6 +94,10 @@ public class AppMain extends Application {
 //			gridPane.getChildren().add(okButton);
 			node.setContent(gridPane);
 			setDialogPane(node);
+			
+//			onCloseRequest = new EventHandler(){
+//				
+//			}
 		}
 		
 //		@Ovrride
