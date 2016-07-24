@@ -1,5 +1,10 @@
 package bookKeeping;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Optional;
 
 import javafx.application.Application;
@@ -17,6 +22,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.h2.Driver;
 
 public class AppMain extends Application {
 
@@ -82,6 +88,16 @@ public class AppMain extends Application {
 				public void handle(ActionEvent arg0) {
 					System.out.println("account name is: " + nameField.getText());
 					System.out.println("with starting amount: " + startAmountBox.getText());
+					try {
+						Connection dbConn = DriverManager.getConnection("jdbc:h2:~/bookKeeping","accountant", "secret");
+						Statement stmt = dbConn.createStatement();
+						boolean tableCreated = stmt.execute("create table if not exists accounts(id identity,name VARCHAR(50),initVal double)");
+						boolean entryAdded = stmt.execute("insert into accounts(id,name,initVal) values(1,'butt',100.00)");
+						dbConn.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					AddAccountDialog.this.hide();
 				}
 			});
