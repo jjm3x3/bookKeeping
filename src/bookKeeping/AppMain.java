@@ -8,23 +8,30 @@ import java.sql.Statement;
 import java.util.Optional;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.h2.Driver;
 
 public class AppMain extends Application {
+
+	private static final String DB_URL = "jdbc:h2:~/bookKeeping";
+	private static final String DB_PASSWORD = "secret";
+	private static final String DB_USERNAME = "accountant";
 
 	public static void main(String[] args) {
 		System.out.println("HI brenna");
@@ -34,6 +41,24 @@ public class AppMain extends Application {
 
 	@Override
 	public void start(Stage firstStage) throws Exception {
+		TableView<Account> table = new TableView<>();
+		TableColumn<Account, String> nameColumn = new TableColumn("Account Name");
+		nameColumn.setCellValueFactory(new PropertyValueFactory<Account, String>("name"));
+		TableColumn<Account, Double> amountColumn = new TableColumn("Current Balence");
+		amountColumn.setCellValueFactory(new PropertyValueFactory<Account, Double>("initAmount"));
+		table.getColumns().add(nameColumn);
+		table.getColumns().add(amountColumn);
+		Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME, DB_PASSWORD);
+		Statement stmt = dbConn.createStatement();
+		ResultSet result = stmt.executeQuery("select * from accounts");
+		ObservableList<Account> accountsList = FXCollections.observableArrayList();
+		while(result.next()){
+			String name = result.getString("name");
+			double accountStart = result.getDouble("initVal");
+			accountsList.add(new Account(name, accountStart));
+		}
+		dbConn.close();
+		table.setItems(accountsList);
 		Button btn = new Button();
 		btn.setText("Add an account");
 		btn.setOnAction(new EventHandler<ActionEvent>(){
@@ -53,11 +78,11 @@ public class AppMain extends Application {
 			}
 			
 		});
-		StackPane stackPane = new StackPane();
-		stackPane.getChildren().add(btn);
+		GridPane gridPane = new GridPane();
+		gridPane.add(table,0, 0);
+		gridPane.add(btn, 0, 1);
 		
-		
-		Scene scene = new Scene(stackPane, 300, 300);
+		Scene scene = new Scene(gridPane, 300, 300);
 		firstStage.setScene(scene);
 		firstStage.setTitle("booKeeping");
 		firstStage.show();
@@ -89,7 +114,7 @@ public class AppMain extends Application {
 					System.out.println("account name is: " + nameField.getText());
 					System.out.println("with starting amount: " + startAmountBox.getText());
 					try {
-						Connection dbConn = DriverManager.getConnection("jdbc:h2:~/bookKeeping","accountant", "secret");
+						Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME, DB_PASSWORD);
 						Statement stmt = dbConn.createStatement();
 						boolean tableCreated = stmt.execute("create table if not exists accounts(id identity,name VARCHAR(50),initVal double)");
 						boolean entryAdded = stmt.execute("insert into accounts(id,name,initVal) values(1,'butt',100.00)");
@@ -120,6 +145,24 @@ public class AppMain extends Application {
 //		public Optional<ButtonType> showAndWait(){
 //			
 //		}
+	}
+	
+	public class Account {
+		private final SimpleStringProperty _name;
+		private final SimpleDoubleProperty _initAmount;
+		
+		Account(String name, double initAmount){
+			_name = new SimpleStringProperty(name);
+			_initAmount = new SimpleDoubleProperty(initAmount);
+		}
+		
+		public String getName(){
+			return _name.get();
+		}
+		
+		public double getInitAmount(){
+			return _initAmount.get();
+		}
 	}
 }
 
