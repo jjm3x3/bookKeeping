@@ -30,7 +30,7 @@ import models.Account;
 
 public class AppMain extends Application {
 
-	private static final String DB_URL = "jdbc:h2:~/bookKeeping";
+	private static final String DB_URL = "jdbc:h2:~/code/workspace/bookKeeping/bookKeeping";
 	private static final String DB_PASSWORD = "secret";
 	private static final String DB_USERNAME = "accountant";
 
@@ -83,26 +83,23 @@ public class AppMain extends Application {
 		addTransactionButton.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent arg0) {
-				try {
-					Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
-					Statement stmt = dbConn.createStatement();
-					boolean createTable = stmt.execute("create table if not exists transactions(id identity, name VARCHAR(100), amount double, account_id int, foreign key (account_id) references public.accounts(id))");
-					boolean insertRecord = stmt.execute("insert into transactions(id,name,amount,account_id) values(NULL, 'a transaction', 50.00, 1)");
-					dbConn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Dialog addTransactionDialog = new AddTransactionDialog();
+				addTransactionDialog.showAndWait();
+
 				
 			}
 		});
 		
 		GridPane gridPane = new GridPane();
+		gridPane.setAlignment(Pos.CENTER);
+		gridPane.setHgap(10);
+		gridPane.setVgap(10);
+
 		gridPane.add(table,0, 0);
 		gridPane.add(btn, 0, 1);
 		gridPane.add(addTransactionButton, 1, 1);
 		
-		Scene scene = new Scene(gridPane, 300, 300);
+		Scene scene = new Scene(gridPane, 500, 500);
 		firstStage.setScene(scene);
 		firstStage.setTitle("booKeeping");
 		firstStage.show();
@@ -140,7 +137,6 @@ public class AppMain extends Application {
 			node.getButtonTypes().add(okButtonType);
 
 			Button okButton = (Button) node.lookupButton(okButtonType);
-//			 = new Button();
 			okButton.setText("ok");
 			okButton.setOnAction(new EventHandler<ActionEvent>(){
 				@Override
@@ -181,6 +177,57 @@ public class AppMain extends Application {
 //		public Optional<ButtonType> showAndWait(){
 //			
 //		}
+	}
+	
+	class AddTransactionDialog extends Dialog<ButtonType>{
+
+		AddTransactionDialog(){
+			DialogPane node = new DialogPane();
+			GridPane content = new GridPane();
+			content.setAlignment(Pos.CENTER);
+			content.setHgap(10);
+			content.setVgap(10);
+			
+			TextField nameField = new TextField();
+			nameField.setPromptText("Transaction Name");
+			TextField amountField = new TextField("Transaction Amount");
+			amountField.setPromptText("Transaction Amount");
+			
+			ButtonType okButtonType =  new ButtonType("OK");
+			node.getButtonTypes().add(okButtonType);
+
+			Button okButton = (Button) node.lookupButton(okButtonType);
+			okButton.setText("ok");	
+			okButton.setOnAction(new EventHandler<ActionEvent>(){
+				@Override
+				public void handle(ActionEvent event) {
+					System.out.println("Do a thing");
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			
+			content.add(nameField, 0, 0);
+			content.add(amountField, 0, 1);
+			content.add(okButton, 0, 2);
+			
+			node.setContent(content);
+			setDialogPane(node);
+		}
+		
+		void addTransaction(){
+			try {
+				Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
+				Statement stmt = dbConn.createStatement();
+				boolean createTable = stmt.execute("create table if not exists " + 
+				"transactions(id identity, name VARCHAR(100), amount double, account_id int, foreign key (account_id) references public.accounts(id))");
+				boolean insertRecord = stmt.execute("insert into transactions(id,name,amount,account_id) values(NULL, 'a transaction', 50.00, 1)");
+				dbConn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 
