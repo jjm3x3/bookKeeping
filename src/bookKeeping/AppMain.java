@@ -26,6 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import models.Account;
 
 public class AppMain extends Application {
 
@@ -48,17 +49,8 @@ public class AppMain extends Application {
 		amountColumn.setCellValueFactory(new PropertyValueFactory<Account, Double>("initAmount"));
 		table.getColumns().add(nameColumn);
 		table.getColumns().add(amountColumn);
-		Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME, DB_PASSWORD);
-		Statement stmt = dbConn.createStatement();
-		ResultSet result = stmt.executeQuery("select * from accounts");
-		ObservableList<Account> accountsList = FXCollections.observableArrayList();
-		while(result.next()){
-			String name = result.getString("name");
-			double accountStart = result.getDouble("initVal");
-			accountsList.add(new Account(name, accountStart));
-		}
-		dbConn.close();
-		table.setItems(accountsList);
+		updateAcountTable(table);
+
 		Button btn = new Button();
 		btn.setText("Add an account");
 		btn.setOnAction(new EventHandler<ActionEvent>(){
@@ -74,18 +66,60 @@ public class AppMain extends Application {
 				if (result.isPresent() ) {
 //						result.get() 
 					System.out.println("so the account was finalized now with result: " + result.get());
+					try {
+						AppMain.this.updateAcountTable(table);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 				}
 			}
 			
 		});
+		
+		Button addTransactionButton = new Button();
+		addTransactionButton.setText("Add Transaction");
+		addTransactionButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent arg0) {
+				try {
+					Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
+					Statement stmt = dbConn.createStatement();
+					boolean createTable = stmt.execute("create table if not exists transactions(id identity, name VARCHAR(100), amount double, account_id int, foreign key (account_id) references public.accounts(id))");
+					boolean insertRecord = stmt.execute("insert into transactions(id,name,amount,account_id) values(NULL, 'a transaction', 50.00, 1)");
+					dbConn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		
 		GridPane gridPane = new GridPane();
 		gridPane.add(table,0, 0);
 		gridPane.add(btn, 0, 1);
+		gridPane.add(addTransactionButton, 1, 1);
 		
 		Scene scene = new Scene(gridPane, 300, 300);
 		firstStage.setScene(scene);
 		firstStage.setTitle("booKeeping");
 		firstStage.show();
+	}
+
+	void updateAcountTable(TableView<Account> table) throws SQLException {
+		Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME, DB_PASSWORD);
+		Statement stmt = dbConn.createStatement();
+		ResultSet result = stmt.executeQuery("select * from accounts");
+		ObservableList<Account> accountsList = FXCollections.observableArrayList();
+		while(result.next()){
+			String name = result.getString("name");
+			double accountStart = result.getDouble("initVal");
+			accountsList.add(new Account(name, accountStart));
+		}
+		dbConn.close();
+		table.setItems(accountsList);
 	}
 
 	class AddAccountDialog extends Dialog<ButtonType> {
@@ -149,23 +183,7 @@ public class AppMain extends Application {
 //		}
 	}
 	
-	public class Account {
-		private final SimpleStringProperty _name;
-		private final SimpleDoubleProperty _initAmount;
-		
-		Account(String name, double initAmount){
-			_name = new SimpleStringProperty(name);
-			_initAmount = new SimpleDoubleProperty(initAmount);
-		}
-		
-		public String getName(){
-			return _name.get();
-		}
-		
-		public double getInitAmount(){
-			return _initAmount.get();
-		}
-	}
+
 }
 
 
