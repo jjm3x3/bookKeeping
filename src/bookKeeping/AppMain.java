@@ -111,13 +111,15 @@ public class AppMain extends Application {
 			okButton.setOnAction(new EventHandler<ActionEvent>(){
 				@Override
 				public void handle(ActionEvent arg0) {
-					System.out.println("account name is: " + nameField.getText());
+					String accountName = nameField.getText();
+					double accountStartAmount = Double.parseDouble(startAmountBox.getText());
+					System.out.println("account name is: " + accountName);
 					System.out.println("with starting amount: " + startAmountBox.getText());
 					try {
 						Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME, DB_PASSWORD);
 						Statement stmt = dbConn.createStatement();
 						boolean tableCreated = stmt.execute("create table if not exists accounts(id identity,name VARCHAR(50),initVal double)");
-						boolean entryAdded = stmt.execute("insert into accounts(id,name,initVal) values(1,'butt',100.00)");
+						boolean entryAdded = stmt.execute("insert into accounts(id,name,initVal) values(NULL, '" + accountName + "'," + accountStartAmount + ")");
 						dbConn.close();
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
