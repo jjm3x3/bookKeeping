@@ -30,7 +30,7 @@ import models.Account;
 
 public class AppMain extends Application {
 
-	private static final String DB_URL = "jdbc:h2:~/code/workspace/bookKeeping/bookKeeping";
+	private static final String DB_URL = "jdbc:h2:~/.bookKeeping/db";
 	private static final String DB_PASSWORD = "secret";
 	private static final String DB_USERNAME = "accountant";
 
@@ -49,7 +49,11 @@ public class AppMain extends Application {
 		amountColumn.setCellValueFactory(new PropertyValueFactory<Account, Double>("initAmount"));
 		table.getColumns().add(nameColumn);
 		table.getColumns().add(amountColumn);
-		updateAcountTable(table);
+		try{
+			updateAcountTable(table);
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
 
 		Button btn = new Button();
 		btn.setText("Add an account");
@@ -83,7 +87,9 @@ public class AppMain extends Application {
 		addTransactionButton.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent arg0) {
-				Dialog addTransactionDialog = new AddTransactionDialog();
+				int accountNumber = table.getSelectionModel().getFocusedIndex();
+				System.out.println(accountNumber);
+				Dialog addTransactionDialog = new AddTransactionDialog(accountNumber);
 				addTransactionDialog.showAndWait();
 
 				
@@ -181,7 +187,7 @@ public class AppMain extends Application {
 	
 	class AddTransactionDialog extends Dialog<ButtonType>{
 
-		AddTransactionDialog(){
+		AddTransactionDialog(final int accountNumber){
 			DialogPane node = new DialogPane();
 			GridPane content = new GridPane();
 			content.setAlignment(Pos.CENTER);
@@ -190,7 +196,7 @@ public class AppMain extends Application {
 			
 			TextField nameField = new TextField();
 			nameField.setPromptText("Transaction Name");
-			TextField amountField = new TextField("Transaction Amount");
+			TextField amountField = new TextField();
 			amountField.setPromptText("Transaction Amount");
 			
 			ButtonType okButtonType =  new ButtonType("OK");
@@ -202,7 +208,7 @@ public class AppMain extends Application {
 				@Override
 				public void handle(ActionEvent event) {
 					System.out.println("Do a thing");
-					// TODO Auto-generated method stub
+					AddTransactionDialog.this.addTransaction(nameField.getText(), Double.parseDouble(amountField.getText()), accountNumber);
 					
 				}
 			});
@@ -215,13 +221,13 @@ public class AppMain extends Application {
 			setDialogPane(node);
 		}
 		
-		void addTransaction(){
+		void addTransaction(String transactionName, double amount, int account){
 			try {
 				Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
 				Statement stmt = dbConn.createStatement();
 				boolean createTable = stmt.execute("create table if not exists " + 
 				"transactions(id identity, name VARCHAR(100), amount double, account_id int, foreign key (account_id) references public.accounts(id))");
-				boolean insertRecord = stmt.execute("insert into transactions(id,name,amount,account_id) values(NULL, 'a transaction', 50.00, 1)");
+				boolean insertRecord = stmt.execute("insert into transactions(id,name,amount,account_id) values(NULL, '" + transactionName + "'," + amount +", " + account + ")");
 				dbConn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
