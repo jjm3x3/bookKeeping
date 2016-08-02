@@ -99,8 +99,14 @@ public class AppMain extends Application {
 				int accountNumber = table.getSelectionModel().getFocusedIndex();
 				System.out.println(accountNumber + 1);
 				Dialog addTransactionDialog = new AddTransactionDialog(accountNumber + 1);
-				addTransactionDialog.showAndWait();
-
+				Optional<ButtonType> result = addTransactionDialog.showAndWait();
+				if (result .isPresent()){
+					try {
+						AppMain.this.updateAcountTable(table);
+					} catch(SQLException e){
+						e.printStackTrace();
+					}
+				}
 				
 			}
 		});
