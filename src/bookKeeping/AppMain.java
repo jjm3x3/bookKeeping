@@ -37,6 +37,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import models.Account;
+import models.Transaction;
 
 public class AppMain extends Application {
 
@@ -72,6 +73,9 @@ public class AppMain extends Application {
 			public void handle(MouseEvent arg0) {
 				if (new DateTime().getMillis() - when < 500){
 					System.out.println("doing something interesting");
+				int accountNumber = table.getSelectionModel().getFocusedIndex();
+					Dialog transactionLog = new AccountTransactionLogDialog(accountNumber + 1);
+					transactionLog.showAndWait();
 				} else {
 					when = new DateTime().getMillis();
 				}
@@ -138,6 +142,61 @@ public class AppMain extends Application {
 		firstStage.setScene(scene);
 		firstStage.setTitle("booKeeping");
 		firstStage.show();
+	}
+	
+	class AccountTransactionLogDialog extends Dialog<ButtonType> {
+		AccountTransactionLogDialog(int accountId) {
+			DialogPane node = new DialogPane();
+			GridPane content = new GridPane();
+			content.setAlignment(Pos.CENTER);
+			content.setHgap(10);
+			content.setVgap(10);
+			
+			TableView<Transaction> table = new TableView();
+			TableColumn<Transaction, String> nameColumn = new TableColumn("Name");
+			nameColumn.setCellValueFactory(new PropertyValueFactory("name"));
+			TableColumn<Transaction, Double> amountColumn = new TableColumn("Amount");
+			amountColumn.setCellValueFactory(new PropertyValueFactory("amount"));
+			table.getColumns().add(nameColumn);
+			table.getColumns().add(amountColumn);
+
+
+			try {
+				Connection dbConn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+				Statement stmt = dbConn.createStatement();
+				ResultSet result = stmt.executeQuery("Select * from transactions where account_id = " + accountId);
+				ObservableList<Transaction> transactionList = FXCollections.observableArrayList();
+				while (result.next()){
+					String name = result.getString("name");
+					double amount = result.getDouble("amount");
+					transactionList.add(new Transaction(name, amount));
+							
+				}
+				dbConn.close();
+				table.setItems(transactionList);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			ButtonType okButtonType =  new ButtonType("OK");
+			node.getButtonTypes().add(okButtonType);
+
+			Button okButton = (Button) node.lookupButton(okButtonType);
+			okButton.setText("ok");	
+			okButton.setOnAction(new EventHandler<ActionEvent>(){
+				@Override
+				public void handle(ActionEvent event) {
+					
+				}
+			});
+			
+			content.add(table, 0, 0);
+			content.add(okButton, 0, 1);
+			
+			node.setContent(content);
+			setDialogPane(node);
+		}
 	}
 
 	void updateAcountTable(TableView<Account> table) throws SQLException {
