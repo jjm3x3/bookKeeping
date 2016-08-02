@@ -33,6 +33,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import models.Account;
@@ -63,6 +64,19 @@ public class AppMain extends Application {
 		}catch (SQLException e){
 			e.printStackTrace();
 		}
+
+		table.setOnMousePressed(new EventHandler<MouseEvent>(){
+
+			long when;
+			@Override
+			public void handle(MouseEvent arg0) {
+				if (new DateTime().getMillis() - when < 500){
+					System.out.println("doing something interesting");
+				} else {
+					when = new DateTime().getMillis();
+				}
+			}
+		});
 
 		Button btn = new Button();
 		btn.setText("Add an account");
@@ -145,32 +159,7 @@ public class AppMain extends Application {
 		table.setItems(accountsList);
 	}
 
-	class AddAccountDialog extends Dialog<ButtonType> {
-
-		AddAccountDialog() {
-			DialogPane node = new DialogPane();
-			GridPane gridPane = new GridPane();
-			gridPane.setAlignment(Pos.CENTER);
-			gridPane.setHgap(10);
-			gridPane.setVgap(10);
-
-			TextField nameField = new TextField();
-			nameField.setPromptText("Account Name");
-			TextField startAmountBox = new TextField();
-			startAmountBox.setPromptText("set start amount");
-
-			ButtonType okButtonType =  new ButtonType("OK");
-			node.getButtonTypes().add(okButtonType);
-
-			Button okButton = (Button) node.lookupButton(okButtonType);
-			okButton.setText("ok");
-			okButton.setOnAction(new EventHandler<ActionEvent>(){
-				@Override
-				public void handle(ActionEvent arg0) {
-					String accountName = nameField.getText();
-					double accountStartAmount = Double.parseDouble(startAmountBox.getText());
-					System.out.println("account name is: " + accountName);
-					System.out.println("with starting amount: " + startAmountBox.getText());
+	static void AddAccount(String accountName, double accountStartAmount) {
 					try {
 						Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME, DB_PASSWORD);
 						Statement stmt = dbConn.createStatement();
@@ -181,77 +170,10 @@ public class AppMain extends Application {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					AddAccountDialog.this.hide();
-				}
-			});
-
-			// build ui
-			gridPane.add(nameField, 0, 0);
-			gridPane.add(startAmountBox, 0, 1);
-			gridPane.add(okButton, 0, 2);
-//			gridPane.getChildren().add(text);
-//			gridPane.getChildren().add(okButton);
-			node.setContent(gridPane);
-			setDialogPane(node);
-			
-//			onCloseRequest = new EventHandler(){
-//				
-//			}
-		}
 		
-//		@Ovrride
-//		public Optional<ButtonType> showAndWait(){
-//			
-//		}
 	}
 	
-	class AddTransactionDialog extends Dialog<ButtonType>{
-
-		AddTransactionDialog(final int accountNumber){
-			DialogPane node = new DialogPane();
-			GridPane content = new GridPane();
-			content.setAlignment(Pos.CENTER);
-			content.setHgap(10);
-			content.setVgap(10);
-			
-			TextField nameField = new TextField();
-			nameField.setPromptText("Transaction Name");
-			TextField amountField = new TextField();
-			amountField.setPromptText("Transaction Amount");
-			DatePicker dateField = new DatePicker();
-			dateField.setPromptText(new DateTime().toString("yyyy-MM-dd"));
-			
-			ButtonType okButtonType =  new ButtonType("OK");
-			node.getButtonTypes().add(okButtonType);
-
-			Button okButton = (Button) node.lookupButton(okButtonType);
-			okButton.setText("ok");	
-			okButton.setOnAction(new EventHandler<ActionEvent>(){
-				@Override
-				public void handle(ActionEvent event) {
-					System.out.println("Do a thing");
-					double amount;
-					try {
-						amount = Double.parseDouble(amountField.getText());
-					} catch(NumberFormatException e){
-						amount = 0;
-					}
-					LocalDate transactionDate = new LocalDate(dateField.getValue().getYear(),dateField.getValue().getMonthValue(),dateField.getValue().getDayOfMonth());
-					AddTransactionDialog.this.addTransaction(nameField.getText(), amount , accountNumber, transactionDate);
-					
-				}
-			});
-			
-			content.add(nameField, 0, 0);
-			content.add(amountField, 0, 1);
-			content.add(dateField, 0, 2);
-			content.add(okButton, 0, 3);
-			
-			node.setContent(content);
-			setDialogPane(node);
-		}
-		
-		void addTransaction(String transactionName, double amount, int account, LocalDate transactionDate){
+		static void addTransaction(String transactionName, double amount, int account, LocalDate transactionDate){
 			try {
 				Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
 				Statement stmt = dbConn.createStatement();
@@ -273,8 +195,6 @@ public class AppMain extends Application {
 				e.printStackTrace();
 			}
 		}
-	}
-	
 
 }
 
