@@ -5,7 +5,15 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+//import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Optional;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import javafx.application.Application;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -18,6 +26,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TableColumn;
@@ -88,8 +97,8 @@ public class AppMain extends Application {
 			@Override
 			public void handle(ActionEvent arg0) {
 				int accountNumber = table.getSelectionModel().getFocusedIndex();
-				System.out.println(accountNumber);
-				Dialog addTransactionDialog = new AddTransactionDialog(accountNumber);
+				System.out.println(accountNumber + 1);
+				Dialog addTransactionDialog = new AddTransactionDialog(accountNumber + 1);
 				addTransactionDialog.showAndWait();
 
 				
@@ -198,6 +207,8 @@ public class AppMain extends Application {
 			nameField.setPromptText("Transaction Name");
 			TextField amountField = new TextField();
 			amountField.setPromptText("Transaction Amount");
+			DatePicker dateField = new DatePicker();
+			dateField.setPromptText(new DateTime().toString("yyyy-MM-dd"));
 			
 			ButtonType okButtonType =  new ButtonType("OK");
 			node.getButtonTypes().add(okButtonType);
@@ -208,26 +219,43 @@ public class AppMain extends Application {
 				@Override
 				public void handle(ActionEvent event) {
 					System.out.println("Do a thing");
-					AddTransactionDialog.this.addTransaction(nameField.getText(), Double.parseDouble(amountField.getText()), accountNumber);
+					double amount;
+					try {
+						amount = Double.parseDouble(amountField.getText());
+					} catch(NumberFormatException e){
+						amount = 0;
+					}
+					LocalDate transactionDate = new LocalDate(dateField.getValue().getYear(),dateField.getValue().getMonthValue(),dateField.getValue().getDayOfMonth());
+					AddTransactionDialog.this.addTransaction(nameField.getText(), amount , accountNumber, transactionDate);
 					
 				}
 			});
 			
 			content.add(nameField, 0, 0);
 			content.add(amountField, 0, 1);
-			content.add(okButton, 0, 2);
+			content.add(dateField, 0, 2);
+			content.add(okButton, 0, 3);
 			
 			node.setContent(content);
 			setDialogPane(node);
 		}
 		
-		void addTransaction(String transactionName, double amount, int account){
+		void addTransaction(String transactionName, double amount, int account, LocalDate transactionDate){
 			try {
 				Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
 				Statement stmt = dbConn.createStatement();
+				DateTime now = new DateTime();
+				System.out.println("its this time: " + now.toString().length());
 				boolean createTable = stmt.execute("create table if not exists " + 
-				"transactions(id identity, name VARCHAR(100), amount double, account_id int, foreign key (account_id) references public.accounts(id))");
-				boolean insertRecord = stmt.execute("insert into transactions(id,name,amount,account_id) values(NULL, '" + transactionName + "'," + amount +", " + account + ")");
+				"transactions(id identity," + 
+						"name VARCHAR(100), " + 
+						"amount double, " +  
+						"account_id int," + 
+						"transaction_date date, " + 
+						"transaction_created varchar(30), " + 
+						"foreign key (account_id) references public.accounts(id))");
+				boolean insertRecord = stmt.execute("insert into transactions(id,name,amount,account_id,transaction_date,transaction_created) " + 
+						"values(NULL, '" + transactionName + "'," + amount +", " + account + ", '" + transactionDate + "', '" + now + "')");
 				dbConn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
