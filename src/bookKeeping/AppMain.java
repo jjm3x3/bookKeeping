@@ -63,7 +63,8 @@ public class AppMain extends Application {
 		try{
 			updateAcountTable(table);
 		}catch (SQLException e){
-			e.printStackTrace();
+			System.err.println(e);
+//			e.printStackTrace();
 		}
 
 		table.setOnMousePressed(new EventHandler<MouseEvent>(){
@@ -175,8 +176,8 @@ public class AppMain extends Application {
 				dbConn.close();
 				table.setItems(transactionList);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.err.println(e);
+//				e.printStackTrace();
 			}
 			
 			ButtonType okButtonType =  new ButtonType("OK");
@@ -204,16 +205,24 @@ public class AppMain extends Application {
 		Statement stmt = dbConn.createStatement();
 		ResultSet result = stmt.executeQuery("select * from accounts");
 		ObservableList<Account> accountsList = FXCollections.observableArrayList();
+		double totalAssets = 0;
 		while(result.next()){
 			String name = result.getString("name");
 			double accountStart = result.getDouble("initVal");
 			Statement transactionStatement = dbConn.createStatement();
-			ResultSet transactions = transactionStatement.executeQuery("select * from transactions where account_id = " + result.getInt("id"));
-			while (transactions.next()){
-				accountStart += transactions.getDouble("amount");
+			try {
+				ResultSet transactions = transactionStatement.executeQuery("select * from transactions where account_id = " + result.getInt("id"));
+				while (transactions.next()){
+					accountStart += transactions.getDouble("amount");
+				}
+			} catch (SQLException e){
+				System.err.println(e);
+//				e.printStackTrace();
 			}
 			accountsList.add(new Account(name, accountStart));
+			totalAssets += accountStart;
 		}
+		accountsList.add(new Account("   TOTAL" , totalAssets));
 		dbConn.close();
 		table.setItems(accountsList);
 	}
