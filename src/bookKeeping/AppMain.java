@@ -128,6 +128,11 @@ public class AppMain extends Application {
 		while(result.next()){
 			String name = result.getString("name");
 			double accountStart = result.getDouble("initVal");
+			Statement transactionStatement = dbConn.createStatement();
+			ResultSet transactions = transactionStatement.executeQuery("select * from transactions where account_id = " + result.getInt("id"));
+			while (transactions.next()){
+				accountStart += transactions.getDouble("amount");
+			}
 			accountsList.add(new Account(name, accountStart));
 		}
 		dbConn.close();
