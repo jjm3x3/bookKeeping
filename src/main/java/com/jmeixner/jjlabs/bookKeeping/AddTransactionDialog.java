@@ -1,4 +1,4 @@
-package bookKeeping;
+package com.jmeixner.jjlabs.bookKeeping;
 
 
 import org.joda.time.DateTime;
@@ -24,11 +24,11 @@ import javafx.scene.layout.GridPane;
 			content.setHgap(10);
 			content.setVgap(10);
 			
-			TextField nameField = new TextField();
+			final TextField nameField = new TextField();
 			nameField.setPromptText("Transaction Name");
-			TextField amountField = new TextField();
+			final TextField amountField = new TextField();
 			amountField.setPromptText("Transaction Amount");
-			DatePicker dateField = new DatePicker();
+			final DatePicker dateField = new DatePicker();
 			dateField.setPromptText(new DateTime().toString("yyyy-MM-dd"));
 			
 			ButtonType okButtonType =  new ButtonType("OK");

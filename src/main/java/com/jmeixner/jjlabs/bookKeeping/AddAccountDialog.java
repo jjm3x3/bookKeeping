@@ -1,4 +1,4 @@
-package bookKeeping;
+package com.jmeixner.jjlabs.bookKeeping;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,9 +18,9 @@ public class AddAccountDialog extends Dialog<ButtonType> {
 			gridPane.setHgap(10);
 			gridPane.setVgap(10);
 
-			TextField nameField = new TextField();
+			final TextField nameField = new TextField();
 			nameField.setPromptText("Account Name");
-			TextField startAmountBox = new TextField();
+			final TextField startAmountBox = new TextField();
 			startAmountBox.setPromptText("set start amount");
 
 			ButtonType okButtonType =  new ButtonType("OK");

@@ -1,4 +1,4 @@
-package bookKeeping;
+package com.jmeixner.jjlabs.bookKeeping;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -53,7 +53,7 @@ public class AppMain extends Application {
 
 	@Override
 	public void start(Stage firstStage) throws Exception {
-		TableView<Account> table = new TableView<>();
+		final TableView<Account> table = new TableView<>();
 		TableColumn<Account, String> nameColumn = new TableColumn("Account Name");
 		nameColumn.setCellValueFactory(new PropertyValueFactory<Account, String>("name"));
 		TableColumn<Account, Double> amountColumn = new TableColumn("Current Balence");
