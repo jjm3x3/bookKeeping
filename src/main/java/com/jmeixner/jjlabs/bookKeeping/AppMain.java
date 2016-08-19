@@ -55,110 +55,22 @@ public class AppMain extends Application {
 
 	@Override
 	public void start(Stage firstStage) throws Exception {
-		final TableView<Account> table = new TableView<>();
-		TableColumn<Account, String> nameColumn = new TableColumn("Account Name");
-		nameColumn.setCellValueFactory(new PropertyValueFactory<Account, String>("name"));
-		TableColumn<Account, Double> amountColumn = new TableColumn("Current Balence");
-		amountColumn.setCellValueFactory(new PropertyValueFactory<Account, Double>("initAmount"));
-		table.getColumns().add(nameColumn);
-		table.getColumns().add(amountColumn);
-		try{
-			updateAccountTable(table);
-		}catch (SQLException e){
-			System.err.println(e);
-//			e.printStackTrace();
-		}
-
-		table.setOnMousePressed(new EventHandler<MouseEvent>(){
-
-			long when;
-			@Override
-			public void handle(MouseEvent arg0) {
-				if (new DateTime().getMillis() - when < 500){
-					System.out.println("doing something interesting");
-				int accountNumber = table.getSelectionModel().getFocusedIndex();
-					Dialog transactionLog = new AccountTransactionLogDialog(accountNumber + 1);
-					transactionLog.showAndWait();
-				} else {
-					when = new DateTime().getMillis();
-				}
-			}
-		});
-
-		Button btn = new Button();
-		btn.setText("Add an account");
-		btn.setOnAction(new EventHandler<ActionEvent>(){
-
-			@Override
-			public void handle(ActionEvent arg0) {
-				System.out.println("Hi brenna");
-				
-//				Dialog alert = new Alert(Alert.AlertType.NONE,"some account was added",ButtonType.OK);
-//				Dialog alert = new TextInputDialog("some example text");
-				Dialog alert = new AddAccountDialog();
-				Optional<ButtonType> result = alert.showAndWait();
-				if (result.isPresent() ) {
-//						result.get() 
-					System.out.println("so the account was finalized now with result: " + result.get());
-					try {
-						AppMain.this.updateAccountTable(table);
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-				}
-			}
-			
-		});
-		
-		Button addTransactionButton = new Button();
-		addTransactionButton.setText("Add Transaction");
-		addTransactionButton.setOnAction(new EventHandler<ActionEvent>(){
-			@Override
-			public void handle(ActionEvent arg0) {
-				int accountNumber = table.getSelectionModel().getFocusedIndex();
-				System.out.println(accountNumber + 1);
-				Dialog addTransactionDialog = new AddTransactionDialog(accountNumber + 1);
-				Optional<ButtonType> result = addTransactionDialog.showAndWait();
-				if (result .isPresent()){
-					try {
-						AppMain.this.updateAccountTable(table);
-					} catch(SQLException e){
-						e.printStackTrace();
-					}
-				}
-				
-			}
-		});
 		
 		Parent mainContent = new GridPane();
-		boolean usingFXML = true;
 
-		if (usingFXML){
-			Class<? extends AppMain> myAppsClass = getClass();
-			System.out.println(myAppsClass.getClassLoader());
-			System.out.println(myAppsClass.getPackage());
-			URL place = myAppsClass.getResource("/MainApp.fxml");
-			System.out.println("where is this: " + place);
-			mainContent = FXMLLoader.load(place);
+		Class<? extends AppMain> myAppsClass = getClass();
+		System.out.println(myAppsClass.getClassLoader());
+		System.out.println(myAppsClass.getPackage());
+		URL place = myAppsClass.getResource("/MainApp.fxml");
+		System.out.println("where is this: " + place);
+		mainContent = FXMLLoader.load(place);
 			
-			GridPane mainGrid = (GridPane) mainContent;
-			ObservableList<Node> viewChildren = mainGrid.getChildren();
-			@SuppressWarnings("unchecked")
-			TableView<Account> fxmltable = (TableView<Account>) viewChildren.get(0);
-			AppMain.updateAccountTable(fxmltable);
+		GridPane mainGrid = (GridPane) mainContent;
+		ObservableList<Node> viewChildren = mainGrid.getChildren();
+		@SuppressWarnings("unchecked")
+		TableView<Account> fxmltable = (TableView<Account>) viewChildren.get(0);
+		AppMain.updateAccountTable(fxmltable);
 
-		} else {
-			GridPane gridPane = (GridPane) mainContent;
-			gridPane.setAlignment(Pos.CENTER);
-			gridPane.setHgap(10);
-			gridPane.setVgap(10);
-
-			gridPane.add(table,0, 0);
-			gridPane.add(btn, 0, 1);
-			gridPane.add(addTransactionButton, 1, 1);
-		}
 		
 		Scene scene = new Scene(mainContent, 500, 500);
 		firstStage.setScene(scene);
@@ -166,7 +78,7 @@ public class AppMain extends Application {
 		firstStage.show();
 	}
 	
-	class AccountTransactionLogDialog extends Dialog<ButtonType> {
+	static class AccountTransactionLogDialog extends Dialog<ButtonType> {
 		AccountTransactionLogDialog(int accountId) {
 			DialogPane node = new DialogPane();
 			GridPane content = new GridPane();

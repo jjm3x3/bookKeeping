@@ -3,6 +3,8 @@ package com.jmeixner.jjlabs.bookKeeping;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import org.joda.time.DateTime;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
@@ -10,8 +12,10 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
 import models.Account;
+import javafx.scene.input.MouseEvent;
 
 public class MainAppController {
+	long when;
 	@FXML private TableView<Account> accountList;
 	
 	@FXML protected void createAccount(ActionEvent event){
@@ -45,6 +49,17 @@ public class MainAppController {
 			}
 		}
 				
+	}
+
+	@FXML public void accountDetails(MouseEvent event) {
+		if (new DateTime().getMillis() - when < 500){
+			System.out.println("doing something interesting");
+			int accountNumber = accountList.getSelectionModel().getFocusedIndex();
+			Dialog transactionLog = new AppMain.AccountTransactionLogDialog(accountNumber + 1);
+			transactionLog.showAndWait();
+		} else {
+			when = new DateTime().getMillis();
+		}
 	}
 
 }
