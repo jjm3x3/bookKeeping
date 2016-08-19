@@ -56,21 +56,14 @@ public class AppMain extends Application {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void start(Stage firstStage) throws Exception {
-		
-		Parent mainContent = new GridPane();
 
 		Class<? extends AppMain> myAppsClass = getClass();
 		System.out.println(myAppsClass.getClassLoader());
 		System.out.println(myAppsClass.getPackage());
 		URL place = myAppsClass.getResource("/MainApp.fxml");
 		System.out.println("where is this: " + place);
-		mainContent = FXMLLoader.load(place);
+		Parent mainContent = FXMLLoader.load(place);
 			
-		GridPane mainGrid = (GridPane) mainContent.getChildrenUnmodifiable().get(1);
-		ObservableList<Node> viewChildren = mainGrid.getChildren();
-		TableView<Account> fxmltable = (TableView<Account>) viewChildren.get(0);
-		AppMain.updateAccountTable(fxmltable);
-
 		
 		Scene scene = new Scene(mainContent, 500, 500);
 		firstStage.setScene(scene);

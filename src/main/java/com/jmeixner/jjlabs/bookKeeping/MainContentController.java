@@ -1,7 +1,9 @@
 package com.jmeixner.jjlabs.bookKeeping;
 
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 import org.joda.time.DateTime;
 
@@ -14,8 +16,9 @@ import javafx.scene.text.Text;
 import models.Account;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.MenuBar;
+import javafx.fxml.Initializable;
 
-public class MainContentController {
+public class MainContentController implements Initializable{
 	long when;
 	@FXML private TableView<Account> accountList;
 	@FXML MenuBar menuBar;
@@ -67,5 +70,15 @@ public class MainContentController {
 	@FXML public void handleAboutAction() {}
 
 	@FXML public void handleKeyInput() {}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		try {
+			AppMain.updateAccountTable(accountList);
+		} catch (SQLException e) { //TODO again probably not the right place to do this
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }
