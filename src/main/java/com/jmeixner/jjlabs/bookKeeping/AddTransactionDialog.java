@@ -4,6 +4,7 @@ package com.jmeixner.jjlabs.bookKeeping;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import dataStore.SimpleDbInteraction;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -47,7 +48,7 @@ import javafx.scene.layout.GridPane;
 						amount = 0;
 					}
 					LocalDate transactionDate = new LocalDate(dateField.getValue().getYear(),dateField.getValue().getMonthValue(),dateField.getValue().getDayOfMonth());
-					AppMain.addTransaction(nameField.getText(), amount , accountNumber, transactionDate);
+					SimpleDbInteraction.addTransaction(nameField.getText(), amount , accountNumber, transactionDate);
 					
 				}
 			});

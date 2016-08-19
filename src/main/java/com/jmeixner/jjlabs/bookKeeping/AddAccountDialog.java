@@ -1,5 +1,6 @@
 package com.jmeixner.jjlabs.bookKeeping;
 
+import dataStore.SimpleDbInteraction;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -55,7 +56,7 @@ public class AddAccountDialog extends Dialog<ButtonType> {
 			System.out.println("with starting amount: " + startAmountBox.getText());
 
 			if (accountNameIsValid && startingAmountIsValid){
-				AppMain.AddAccount(accountName, accountStartAmount);
+				SimpleDbInteraction.AddAccount(accountName, accountStartAmount);
 			}
 		}
 	};

@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import dataStore.SimpleDbInteraction;
 import javafx.application.Application;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -41,12 +42,9 @@ import models.Transaction;
 
 public class AppMain extends Application {
 
-	private static final String DB_URL = "jdbc:h2:~/.bookKeeping/db";
-	private static final String DB_PASSWORD = "secret";
-	private static final String DB_USERNAME = "accountant";
-
 	public static void main(String[] args) {
 		System.out.println("HI brenna");
+		SimpleDbInteraction.runsql();
 		launch(args);
 
 	}
@@ -163,17 +161,7 @@ public class AppMain extends Application {
 
 
 			try {
-				Connection dbConn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-				Statement stmt = dbConn.createStatement();
-				ResultSet result = stmt.executeQuery("Select * from transactions where account_id = " + accountId);
-				ObservableList<Transaction> transactionList = FXCollections.observableArrayList();
-				while (result.next()){
-					String name = result.getString("name");
-					double amount = result.getDouble("amount");
-					transactionList.add(new Transaction(name, amount));
-							
-				}
-				dbConn.close();
+				ObservableList<Transaction> transactionList = SimpleDbInteraction.getTransactionList(accountId);
 				table.setItems(transactionList);
 			} catch (SQLException e) {
 				System.err.println(e);
@@ -198,71 +186,15 @@ public class AppMain extends Application {
 			node.setContent(content);
 			setDialogPane(node);
 		}
+
+
 	}
 
 	void updateAcountTable(TableView<Account> table) throws SQLException {
-		Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME, DB_PASSWORD);
-		Statement stmt = dbConn.createStatement();
-		ResultSet result = stmt.executeQuery("select * from accounts");
-		ObservableList<Account> accountsList = FXCollections.observableArrayList();
-		double totalAssets = 0;
-		while(result.next()){
-			String name = result.getString("name");
-			double accountStart = result.getDouble("initVal");
-			Statement transactionStatement = dbConn.createStatement();
-			try {
-				ResultSet transactions = transactionStatement.executeQuery("select * from transactions where account_id = " + result.getInt("id"));
-				while (transactions.next()){
-					accountStart += transactions.getDouble("amount");
-				}
-			} catch (SQLException e){
-				System.err.println(e);
-//				e.printStackTrace();
-			}
-			accountsList.add(new Account(name, accountStart));
-			totalAssets += accountStart;
-		}
-		accountsList.add(new Account("   TOTAL" , totalAssets));
-		dbConn.close();
+		ObservableList<Account> accountsList = SimpleDbInteraction.getAccountList();
 		table.setItems(accountsList);
 	}
 
-	static void AddAccount(String accountName, double accountStartAmount) {
-					try {
-						Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME, DB_PASSWORD);
-						Statement stmt = dbConn.createStatement();
-						boolean tableCreated = stmt.execute("create table if not exists accounts(id identity,name VARCHAR(50),initVal double)");
-						boolean entryAdded = stmt.execute("insert into accounts(id,name,initVal) values(NULL, '" + accountName + "'," + accountStartAmount + ")");
-						dbConn.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-		
-	}
-	
-		static void addTransaction(String transactionName, double amount, int account, LocalDate transactionDate){
-			try {
-				Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
-				Statement stmt = dbConn.createStatement();
-				DateTime now = new DateTime();
-				System.out.println("its this time: " + now.toString().length());
-				boolean createTable = stmt.execute("create table if not exists " + 
-				"transactions(id identity," + 
-						"name VARCHAR(100), " + 
-						"amount double, " +  
-						"account_id int," + 
-						"transaction_date date, " + 
-						"transaction_created varchar(30), " + 
-						"foreign key (account_id) references public.accounts(id))");
-				boolean insertRecord = stmt.execute("insert into transactions(id,name,amount,account_id,transaction_date,transaction_created) " + 
-						"values(NULL, '" + transactionName + "'," + amount +", " + account + ", '" + transactionDate + "', '" + now + "')");
-				dbConn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 
 }
 
