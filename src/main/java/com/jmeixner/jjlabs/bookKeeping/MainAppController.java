@@ -22,7 +22,7 @@ public class MainAppController {
 		if (result.isPresent() ) {
 			System.out.println("so the account was finalized now with result: " + result.get());
 			try {
-				AppMain.updateAcountTable(accountList);
+				AppMain.updateAccountTable(accountList);
 			} catch (SQLException e) { // TODO ::: this is probably not correct
 				// TODO Auto-generated catch block
 				e.printStackTrace();

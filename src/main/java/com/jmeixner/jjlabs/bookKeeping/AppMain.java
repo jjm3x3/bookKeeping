@@ -26,6 +26,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -62,7 +63,7 @@ public class AppMain extends Application {
 		table.getColumns().add(nameColumn);
 		table.getColumns().add(amountColumn);
 		try{
-			updateAcountTable(table);
+			updateAccountTable(table);
 		}catch (SQLException e){
 			System.err.println(e);
 //			e.printStackTrace();
@@ -100,7 +101,7 @@ public class AppMain extends Application {
 //						result.get() 
 					System.out.println("so the account was finalized now with result: " + result.get());
 					try {
-						AppMain.this.updateAcountTable(table);
+						AppMain.this.updateAccountTable(table);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -122,7 +123,7 @@ public class AppMain extends Application {
 				Optional<ButtonType> result = addTransactionDialog.showAndWait();
 				if (result .isPresent()){
 					try {
-						AppMain.this.updateAcountTable(table);
+						AppMain.this.updateAccountTable(table);
 					} catch(SQLException e){
 						e.printStackTrace();
 					}
@@ -141,6 +142,12 @@ public class AppMain extends Application {
 			URL place = myAppsClass.getResource("/MainApp.fxml");
 			System.out.println("where is this: " + place);
 			mainContent = FXMLLoader.load(place);
+			
+			GridPane mainGrid = (GridPane) mainContent;
+			ObservableList<Node> viewChildren = mainGrid.getChildren();
+			@SuppressWarnings("unchecked")
+			TableView<Account> fxmltable = (TableView<Account>) viewChildren.get(0);
+			AppMain.updateAccountTable(fxmltable);
 
 		} else {
 			GridPane gridPane = (GridPane) mainContent;
@@ -211,7 +218,7 @@ public class AppMain extends Application {
 //		table.setItems(accountsList);
 //	}
 
-	public static void updateAcountTable(TableView<Account> table) throws SQLException {
+	public static void updateAccountTable(TableView<Account> table) throws SQLException {
 		ObservableList<Account> accountsList = SimpleDbInteraction.getAccountList();
 		table.setItems(accountsList);
 	}
