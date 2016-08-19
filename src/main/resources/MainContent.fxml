@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+
+
+<GridPane fx:controller="com.jmeixner.jjlabs.bookKeeping.MainContentController"
+    xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+<padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
+
+	<TableView fx:id="accountList" 
+		GridPane.columnIndex="0" GridPane.rowIndex="0" onMousePressed="#accountDetails">
+		<columns>
+			<TableColumn text="Account Name">
+				<cellValueFactory>
+					<PropertyValueFactory property="name"></PropertyValueFactory>
+				</cellValueFactory>
+			</TableColumn>
+
+			<TableColumn text="Current Balance">
+				<cellValueFactory>
+					<PropertyValueFactory property="initAmount"></PropertyValueFactory>
+				</cellValueFactory>
+			</TableColumn>
+		</columns>
+	</TableView>
+
+   <HBox spacing="10" 
+        GridPane.columnIndex="0" GridPane.rowIndex="1">
+        <Button text="Create Account"     
+        onAction="#createAccount"/>
+	</HBox>
+	
+	
+   	<HBox spacing="10" 
+        GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <Button text="Add a transaction"     
+        onAction="#addTransaction"/>
+	</HBox>
+	
+</GridPane>

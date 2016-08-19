@@ -53,6 +53,7 @@ public class AppMain extends Application {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void start(Stage firstStage) throws Exception {
 		
@@ -65,9 +66,8 @@ public class AppMain extends Application {
 		System.out.println("where is this: " + place);
 		mainContent = FXMLLoader.load(place);
 			
-		GridPane mainGrid = (GridPane) mainContent;
+		GridPane mainGrid = (GridPane) mainContent.getChildrenUnmodifiable().get(1);
 		ObservableList<Node> viewChildren = mainGrid.getChildren();
-		@SuppressWarnings("unchecked")
 		TableView<Account> fxmltable = (TableView<Account>) viewChildren.get(0);
 		AppMain.updateAccountTable(fxmltable);
 

@@ -8,39 +8,44 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.MenuItem?>
 
-<GridPane fx:controller="com.jmeixner.jjlabs.bookKeeping.MainAppController"
-    xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
-<padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
+<BorderPane fx:controller="com.jmeixner.jjlabs.bookKeeping.MainAppController"
+    xmlns:fx="http://javafx.com/fxml" >
+    <top>
+   <MenuBar fx:id="menuBar" onKeyPressed="#handleKeyInput">
+      <menus>
+         <Menu text="File">
+            <items>
+            <MenuItem text="Backup" onAction="#takeBackup"/>
+               <!-- <MenuItem text="New"/> -->
+               <!-- <MenuItem text="Open"/> -->
+               <!-- <MenuItem text="Save"/> -->
+               <!-- <MenuItem text="Save As"/> -->
+               <SeparatorMenuItem  />
+               <MenuItem text="Exit"/>
+            </items>
+         </Menu>
+         <!-- <Menu text="Edit"> -->
+         <!--    <items> -->
+         <!--       <MenuItem text="Copy"/> -->
+         <!--       <MenuItem text="Cut"/> -->
+         <!--       <MenuItem text="Paste"/> -->
+         <!--    </items> -->
+         <!-- </Menu> -->
+         <!-- <Menu text="Help"> -->
+         <!--    <items> -->
+         <!--       <MenuItem text="Search" disable="true"/> -->
+         <!--       <MenuItem text="Online Manual" visible="false"/> -->
+         <!--       <SeparatorMenuItem /> -->
+         <!--       <MenuItem text="About" onAction="#handleAboutAction"/> -->
+         <!--    </items> -->
+         <!-- </Menu> -->
+      </menus>
+   </MenuBar>
+	</top>
+	<center>
+		<fx:include source="MainContent.fxml"/>
+	</center>
 
-	<TableView fx:id="accountList" 
-		GridPane.columnIndex="0" GridPane.rowIndex="0" onMousePressed="#accountDetails">
-		<columns>
-			<TableColumn text="Account Name">
-				<cellValueFactory>
-					<PropertyValueFactory property="name"></PropertyValueFactory>
-				</cellValueFactory>
-			</TableColumn>
-
-			<TableColumn text="Current Balance">
-				<cellValueFactory>
-					<PropertyValueFactory property="initAmount"></PropertyValueFactory>
-				</cellValueFactory>
-			</TableColumn>
-		</columns>
-	</TableView>
-
-   <HBox spacing="10" 
-        GridPane.columnIndex="0" GridPane.rowIndex="1">
-        <Button text="Create Account"     
-        onAction="#createAccount"/>
-	</HBox>
-	
-	
-   <HBox spacing="10" 
-        GridPane.columnIndex="1" GridPane.rowIndex="1">
-        <Button text="Add a transaction"     
-        onAction="#addTransaction"/>
-	</HBox>
-	
-</GridPane>
+</BorderPane>
