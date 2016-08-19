@@ -35,4 +35,12 @@
         <Button text="Create Account"     
         onAction="#createAccount"/>
 	</HBox>
+	
+	
+   <HBox spacing="10" 
+        GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <Button text="Add a transaction"     
+        onAction="#addTransaction"/>
+	</HBox>
+	
 </GridPane>
