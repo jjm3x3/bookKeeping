@@ -206,7 +206,12 @@ public class AppMain extends Application {
 
 	}
 
-	void updateAcountTable(TableView<Account> table) throws SQLException {
+//	void updateAcountTable(TableView<Account> table) throws SQLException {
+//		ObservableList<Account> accountsList = SimpleDbInteraction.getAccountList();
+//		table.setItems(accountsList);
+//	}
+
+	public static void updateAcountTable(TableView<Account> table) throws SQLException {
 		ObservableList<Account> accountsList = SimpleDbInteraction.getAccountList();
 		table.setItems(accountsList);
 	}
