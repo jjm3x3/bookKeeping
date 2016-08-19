@@ -1,5 +1,6 @@
 package com.jmeixner.jjlabs.bookKeeping;
 
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -23,7 +24,9 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -128,16 +131,29 @@ public class AppMain extends Application {
 			}
 		});
 		
-		GridPane gridPane = new GridPane();
-		gridPane.setAlignment(Pos.CENTER);
-		gridPane.setHgap(10);
-		gridPane.setVgap(10);
+		Parent mainContent = new GridPane();
+		boolean usingFXML = true;
 
-		gridPane.add(table,0, 0);
-		gridPane.add(btn, 0, 1);
-		gridPane.add(addTransactionButton, 1, 1);
+		if (usingFXML){
+			Class<? extends AppMain> myAppsClass = getClass();
+			System.out.println(myAppsClass.getClassLoader());
+			System.out.println(myAppsClass.getPackage());
+			URL place = myAppsClass.getResource("/MainApp.fxml");
+			System.out.println("where is this: " + place);
+			mainContent = FXMLLoader.load(place);
+
+		} else {
+			GridPane gridPane = (GridPane) mainContent;
+			gridPane.setAlignment(Pos.CENTER);
+			gridPane.setHgap(10);
+			gridPane.setVgap(10);
+
+			gridPane.add(table,0, 0);
+			gridPane.add(btn, 0, 1);
+			gridPane.add(addTransactionButton, 1, 1);
+		}
 		
-		Scene scene = new Scene(gridPane, 500, 500);
+		Scene scene = new Scene(mainContent, 500, 500);
 		firstStage.setScene(scene);
 		firstStage.setTitle("booKeeping");
 		firstStage.show();
