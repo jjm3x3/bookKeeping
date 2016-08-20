@@ -17,6 +17,6 @@
 
 	<TextField fx:id="amountField" promptText="Starting Amount" GridPane.columnIndex="0" GridPane.rowIndex="1" ></TextField>
 
-	<Button fx:id="okButton" text="OK" GridPane.columnIndex="0" GridPane.rowIndex="3" onAction="#okButtonClick"></Button>
+	<Button fx:id="okButton" text="OK" GridPane.columnIndex="0" GridPane.rowIndex="2" onAction="#okButtonClick"></Button>
 
 </GridPane>

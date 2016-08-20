@@ -40,8 +40,7 @@ public class MainContentController implements Initializable{
 		System.out.println("will add an account");
 		System.out.println("Hi brenna");
 				
-		boolean newWindow = true; 
-		if (newWindow){
+		// TODO could probably reuse this stage but there seems to be minimal memory impact
 		Stage addAccountStage = new Stage();
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddAccountWindow.fxml"));
 		Parent view;
@@ -66,20 +65,6 @@ public class MainContentController implements Initializable{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		}else {
-		Dialog<ButtonType> alert = new AddAccountDialog();
-		Optional<ButtonType> result = alert.showAndWait();
-		if (result.isPresent() ) {
-			System.out.println("so the account was finalized now with result: " + result.get());
-			try {
-				AppMain.updateAccountTable(accountList);
-			} catch (SQLException e) { // TODO ::: this is probably not correct
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-					
-		}
 		}
 	}
 
