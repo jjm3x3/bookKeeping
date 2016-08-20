@@ -75,6 +75,8 @@ public class MainContentController implements Initializable{
 		
 		
 		int accountNumber = accountList.getSelectionModel().getFocusedIndex();
+		// TODO figure out how to warn against changing the "primary account. account number one
+		System.out.println("add transaction for acount in place: " + accountNumber);
 
 		final Stage addTransactionStage = new Stage();
 		Parent exampleContent = null;

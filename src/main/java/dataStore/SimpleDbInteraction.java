@@ -66,6 +66,7 @@ public class SimpleDbInteraction {
 		Statement stmt = dbConn.createStatement();
 		ResultSet result = stmt.executeQuery("select * from accounts");
 		ObservableList<Account> accountsList = FXCollections.observableArrayList();
+//		accountList.add(new Account(""))
 		double totalAssets = 0;
 		while(result.next()){
 			String name = result.getString("name");
