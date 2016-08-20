@@ -30,6 +30,7 @@ public class AddAccountDialog extends Dialog<ButtonType> {
 		node.getButtonTypes().add(okButtonType);
 
 		Button okButton = (Button) node.lookupButton(okButtonType);
+		okButton.setDisable(true);
 		okButton.setText("ok");
 		okButton.setOnAction(submitHandler);
 

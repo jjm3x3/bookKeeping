@@ -1,5 +1,6 @@
 package com.jmeixner.jjlabs.bookKeeping;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -8,13 +9,25 @@ import java.util.ResourceBundle;
 import org.joda.time.DateTime;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import models.Account;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.control.MenuBar;
 import javafx.fxml.Initializable;
 
@@ -42,7 +55,47 @@ public class MainContentController implements Initializable{
 	}
 
 	@FXML public void addTransaction(ActionEvent event) {
+		// TODO could probably reuse this stage but there seems to be minimal memory impact
+		
+		
+		boolean newWindow = true;
 		int accountNumber = accountList.getSelectionModel().getFocusedIndex();
+
+		if (newWindow){
+		final Stage addTransactionStage = new Stage();
+		Parent exampleContent = null;
+		try {
+			URL viewUrl = getClass().getResource("/AddTransactionWindow.fxml");
+			System.out.println("view for 'dialog' " + viewUrl);
+			FXMLLoader loader = new FXMLLoader(viewUrl);
+			exampleContent = loader.load();
+			AddTransactionDialogController controller = loader.getController();
+			controller.initData(addTransactionStage, accountNumber + 1);
+		Scene theContent = new Scene(exampleContent, 300,300);
+		addTransactionStage.setScene(theContent);
+		addTransactionStage.initModality(Modality.APPLICATION_MODAL);
+		addTransactionStage.show();
+		addTransactionStage.setOnHidden(new EventHandler<WindowEvent>(){
+
+			@Override
+			public void handle(WindowEvent event) {
+				try {
+					AppMain.updateAccountTable(accountList);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+			
+		});
+//		addTransactionStage
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		} else {
+
 		System.out.println(accountNumber + 1);
 		Dialog<ButtonType> addTransactionDialog = new AddTransactionDialog(accountNumber + 1);
 		Optional<ButtonType> result = addTransactionDialog.showAndWait();
@@ -52,6 +105,7 @@ public class MainContentController implements Initializable{
 			} catch(SQLException e){
 				e.printStackTrace();
 			}
+		}
 		}
 				
 	}
