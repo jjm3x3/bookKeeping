@@ -46,10 +46,11 @@ public class MainContentController implements Initializable{
 		Parent view;
 		try {
 			view = loader.load();
-			Scene scene = new Scene(view, 300, 300);
+			Scene scene = new Scene(view, 350, 200);
 			AddAccountDialogController controller = loader.getController();
 			controller.initData(addAccountStage);
 			addAccountStage.setScene(scene);
+			addAccountStage.initModality(Modality.APPLICATION_MODAL);
 			addAccountStage.show();
 			addAccountStage.setOnHidden(new EventHandler<WindowEvent>(){
 				@Override
