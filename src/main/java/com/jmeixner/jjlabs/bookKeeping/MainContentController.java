@@ -40,6 +40,34 @@ public class MainContentController implements Initializable{
 		System.out.println("will add an account");
 		System.out.println("Hi brenna");
 				
+		boolean newWindow = true; 
+		if (newWindow){
+		Stage addAccountStage = new Stage();
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddAccountWindow.fxml"));
+		Parent view;
+		try {
+			view = loader.load();
+			Scene scene = new Scene(view, 300, 300);
+			AddAccountDialogController controller = loader.getController();
+			controller.initData(addAccountStage);
+			addAccountStage.setScene(scene);
+			addAccountStage.show();
+			addAccountStage.setOnHidden(new EventHandler<WindowEvent>(){
+				@Override
+				public void handle(WindowEvent event) {
+					try {
+						AppMain.updateAccountTable(accountList);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}else {
 		Dialog<ButtonType> alert = new AddAccountDialog();
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.isPresent() ) {
@@ -51,6 +79,7 @@ public class MainContentController implements Initializable{
 				e.printStackTrace();
 			}
 					
+		}
 		}
 	}
 

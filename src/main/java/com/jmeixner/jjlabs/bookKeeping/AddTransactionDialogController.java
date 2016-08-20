@@ -15,39 +15,39 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class AddTransactionDialogController implements Initializable{
-		@FXML private TextField nameField;
-		@FXML private Button okButton;
-		@FXML private TextField amountField;
-		@FXML private DatePicker dateField;
-		private int accountId;
-		private Stage self;
+	@FXML private TextField nameField;
+	@FXML private Button okButton;
+	@FXML private TextField amountField;
+	@FXML private DatePicker dateField;
+	private int accountId;
+	private Stage self;
 
-		@FXML public void okButtonClick() {
-					System.out.println("Do a thing");
-					double amount;
-					try {
-						amount = Double.parseDouble(amountField.getText());
-					} catch(NumberFormatException e){
-						amount = 0;
-					}
-					LocalDate transactionDate = new LocalDate(dateField.getValue().getYear(),dateField.getValue().getMonthValue(),dateField.getValue().getDayOfMonth());
-					SimpleDbInteraction.addTransaction(nameField.getText(), amount , accountId , transactionDate); 
-					self.close();
+	@FXML public void okButtonClick() {
+		System.out.println("Do a thing");
+		double amount;
+		try {
+			amount = Double.parseDouble(amountField.getText());
+		} catch(NumberFormatException e){
+			amount = 0;
 		}
+		LocalDate transactionDate = new LocalDate(dateField.getValue().getYear(),dateField.getValue().getMonthValue(),dateField.getValue().getDayOfMonth());
+		SimpleDbInteraction.addTransaction(nameField.getText(), amount , accountId , transactionDate); 
+		self.close();
+	}
 		
-		public void initData(Stage self, int accountId){
-			this.accountId = accountId;
-			this.self = self;
+	public void initData(Stage self, int accountId){
+		this.accountId = accountId;
+		this.self = self;
 
-		}
+	}
 
-		@Override
-		public void initialize(URL arg0, ResourceBundle arg1) {
-			// TODO Auto-generated method stub
-			dateField.setPromptText(new DateTime().toString("yyyy-MM-dd"));
-		}
-		
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		// TODO Auto-generated method stub
+		dateField.setPromptText(new DateTime().toString("yyyy-MM-dd"));
+	}
+	
 
-		
+	
 
 }
