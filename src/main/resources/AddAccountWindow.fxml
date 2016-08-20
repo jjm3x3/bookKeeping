@@ -14,11 +14,9 @@
 <padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
 
 	<Label text="Account Name" GridPane.columnIndex="0" GridPane.rowIndex="0" ></Label>
-
 	<TextField fx:id="nameField" promptText="Account Name" GridPane.columnIndex="1" GridPane.rowIndex="0" ></TextField>
 
 	<Label text="Starting Balance" GridPane.columnIndex="0" GridPane.rowIndex="1" ></Label>
-
 	<TextField fx:id="amountField" promptText="Starting Amount" GridPane.columnIndex="1" GridPane.rowIndex="1" ></TextField>
 
 	<Button fx:id="okButton" text="OK" GridPane.columnIndex="1" GridPane.rowIndex="2" onAction="#okButtonClick"></Button>

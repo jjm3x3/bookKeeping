@@ -51,6 +51,7 @@ public class MainContentController implements Initializable{
 			controller.initData(addAccountStage);
 			addAccountStage.setScene(scene);
 			addAccountStage.initModality(Modality.APPLICATION_MODAL);
+			addAccountStage.setTitle("Add Account");
 			addAccountStage.show();
 			addAccountStage.setOnHidden(new EventHandler<WindowEvent>(){
 				@Override
@@ -84,9 +85,10 @@ public class MainContentController implements Initializable{
 			exampleContent = loader.load();
 			AddTransactionDialogController controller = loader.getController();
 			controller.initData(addTransactionStage, accountNumber + 1);
-			Scene theContent = new Scene(exampleContent, 300,300);
+			Scene theContent = new Scene(exampleContent, 350,225);
 			addTransactionStage.setScene(theContent);
 			addTransactionStage.initModality(Modality.APPLICATION_MODAL);
+			addTransactionStage.setTitle("Add Transaction");
 			addTransactionStage.show();
 			addTransactionStage.setOnHidden(new EventHandler<WindowEvent>(){
 
