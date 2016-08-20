@@ -58,10 +58,8 @@ public class MainContentController implements Initializable{
 		// TODO could probably reuse this stage but there seems to be minimal memory impact
 		
 		
-		boolean newWindow = true;
 		int accountNumber = accountList.getSelectionModel().getFocusedIndex();
 
-		if (newWindow){
 		final Stage addTransactionStage = new Stage();
 		Parent exampleContent = null;
 		try {
@@ -71,41 +69,27 @@ public class MainContentController implements Initializable{
 			exampleContent = loader.load();
 			AddTransactionDialogController controller = loader.getController();
 			controller.initData(addTransactionStage, accountNumber + 1);
-		Scene theContent = new Scene(exampleContent, 300,300);
-		addTransactionStage.setScene(theContent);
-		addTransactionStage.initModality(Modality.APPLICATION_MODAL);
-		addTransactionStage.show();
-		addTransactionStage.setOnHidden(new EventHandler<WindowEvent>(){
+			Scene theContent = new Scene(exampleContent, 300,300);
+			addTransactionStage.setScene(theContent);
+			addTransactionStage.initModality(Modality.APPLICATION_MODAL);
+			addTransactionStage.show();
+			addTransactionStage.setOnHidden(new EventHandler<WindowEvent>(){
 
-			@Override
-			public void handle(WindowEvent event) {
-				try {
-					AppMain.updateAccountTable(accountList);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				@Override
+				public void handle(WindowEvent event) {
+					try {
+						AppMain.updateAccountTable(accountList);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				
-			}
+				}
 			
-		});
-//		addTransactionStage
+			});
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		} else {
-
-		System.out.println(accountNumber + 1);
-		Dialog<ButtonType> addTransactionDialog = new AddTransactionDialog(accountNumber + 1);
-		Optional<ButtonType> result = addTransactionDialog.showAndWait();
-		if (result .isPresent()){
-			try {
-				AppMain.updateAccountTable(accountList);
-			} catch(SQLException e){
-				e.printStackTrace();
-			}
-		}
 		}
 				
 	}
