@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import org.joda.time.DateTime;
 
+import dataStore.SimpleDbInteraction;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
@@ -35,6 +36,7 @@ public class MainAppController implements Initializable {
 
 	@FXML public void takeBackup() {
 		System.out.println("going to take a backup");
+		SimpleDbInteraction.takeBackup();
 		
 	}
 

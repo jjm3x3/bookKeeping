@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.h2.tools.RunScript;
+import org.h2.tools.Script;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -127,6 +129,37 @@ public class SimpleDbInteraction {
 						"transaction_created varchar(30), " + 
 						"foreign key (account_id) references public.accounts(id))");
 			dbConn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void takeBackup() {
+		Connection dbConn;
+		try {
+			dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
+			PreparedStatement prep = dbConn.prepareStatement("SCRIPT TO 'someFile.bak';");
+
+//			PreparedStatement prep = dbConn.prepareStatement("BACKUP TO 'bookKeeping.bak'");
+			prep.execute();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		Script runScript = new Script();
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public static void restore(){
+		Connection dbConn;
+		try {
+			dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
+			PreparedStatement prep = dbConn.prepareStatement("RUNSCRIPT FROM 'someFile.bak'; ");
+			prep.execute();
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

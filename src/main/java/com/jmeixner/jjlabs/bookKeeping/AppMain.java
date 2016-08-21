@@ -56,6 +56,7 @@ public class AppMain extends Application {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void start(Stage firstStage) throws Exception {
+//		SimpleDbInteraction.restore();
 
 		Class<? extends AppMain> myAppsClass = getClass();
 		System.out.println(myAppsClass.getClassLoader());
