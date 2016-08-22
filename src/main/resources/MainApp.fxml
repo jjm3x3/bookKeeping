@@ -18,6 +18,7 @@
          <Menu text="File">
             <items>
             <MenuItem text="Backup" onAction="#takeBackup"/>
+            <MenuItem text="Restore" onAction="#retore"/>
                <!-- <MenuItem text="New"/> -->
                <!-- <MenuItem text="Open"/> -->
                <!-- <MenuItem text="Save"/> -->
@@ -45,7 +46,7 @@
    </MenuBar>
 	</top>
 	<center>
-		<fx:include source="MainContent.fxml"/>
+		<fx:include fx:id="mainContent" source="MainContent.fxml"/>
 	</center>
 
 </BorderPane>

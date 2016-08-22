@@ -1,5 +1,7 @@
 package dataStore;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -153,16 +155,30 @@ public class SimpleDbInteraction {
 		
 	}
 	
-	public static void restore(){
+	public static void restoreFromFile(File file){
 		Connection dbConn;
 		try {
+			Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", "rm ~/.bookKeeping/* "});
+			while (p.isAlive()) {}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
 			dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
-			PreparedStatement prep = dbConn.prepareStatement("RUNSCRIPT FROM 'someFile.bak'; ");
-			prep.execute();
+			try {
+				PreparedStatement prep = dbConn.prepareStatement("RUNSCRIPT FROM '" + file.getAbsolutePath() + "'; ");
+				prep.execute();
+			} catch (SQLException e){
+				e.printStackTrace();
+			} finally {
+				dbConn.close();
+			}
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 	
+		
 	}
 }
