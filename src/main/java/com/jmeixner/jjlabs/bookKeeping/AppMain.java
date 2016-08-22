@@ -1,5 +1,7 @@
 package com.jmeixner.jjlabs.bookKeeping;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -58,18 +60,27 @@ public class AppMain extends Application {
 	public void start(Stage firstStage) throws Exception {
 //		SimpleDbInteraction.restore();
 
-		Class<? extends AppMain> myAppsClass = getClass();
+		Scene scene = getMainContentScene(firstStage, getClass());
+		firstStage.setScene(scene);
+		firstStage.setTitle("booKeeping");
+		firstStage.show();
+	}
+
+	static Scene getMainContentScene(Stage firstStage, Class from) throws IOException {
+		Class<? extends AppMain> myAppsClass = from;
 		System.out.println(myAppsClass.getClassLoader());
 		System.out.println(myAppsClass.getPackage());
 		URL place = myAppsClass.getResource("/MainApp.fxml");
 		System.out.println("where is this: " + place);
+		FXMLLoader loader = new FXMLLoader(place);
 		Parent mainContent = FXMLLoader.load(place);
 			
 		
-		Scene scene = new Scene(mainContent, 500, 500);
-		firstStage.setScene(scene);
-		firstStage.setTitle("booKeeping");
-		firstStage.show();
+		Parent view = loader.load();
+		MainAppController controller = loader.getController();
+		controller.initData(firstStage);
+		Scene scene = new Scene(view, 500, 500);
+		return scene;
 	}
 	
 	static class AccountTransactionLogDialog extends Dialog<ButtonType> {
