@@ -139,10 +139,18 @@ public class SimpleDbInteraction {
 
 	public static void takeBackup(File file) {
 		Connection dbConn;
+		String fileName = file.getAbsolutePath();
+		System.out.println(fileName.lastIndexOf('.'));
+	
+		if (fileName.lastIndexOf('.') != -1){
+			fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+		}
+		
+		System.out.println("writing to file: "  + fileName);
 		try {
 			dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
-			PreparedStatement prep = dbConn.prepareStatement("SCRIPT TO '" + file + ".bak';");
-
+			PreparedStatement prep = dbConn.prepareStatement("SCRIPT TO '" + fileName + ".bak';");
+			
 //			PreparedStatement prep = dbConn.prepareStatement("BACKUP TO 'bookKeeping.bak'");
 			prep.execute();
 

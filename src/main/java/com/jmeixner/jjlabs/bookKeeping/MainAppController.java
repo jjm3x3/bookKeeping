@@ -43,6 +43,7 @@ public class MainAppController implements Initializable {
 	@FXML public void takeBackup() {
 		System.out.println("going to take a backup");
 		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialFileName("*.bak");
 		fileChooser.setTitle("Choose file to backup to");
 		File file = fileChooser.showSaveDialog(self);
 		if (file != null){
