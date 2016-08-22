@@ -137,11 +137,11 @@ public class SimpleDbInteraction {
 		}
 	}
 
-	public static void takeBackup() {
+	public static void takeBackup(File file) {
 		Connection dbConn;
 		try {
 			dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
-			PreparedStatement prep = dbConn.prepareStatement("SCRIPT TO 'someFile.bak';");
+			PreparedStatement prep = dbConn.prepareStatement("SCRIPT TO '" + file + ".bak';");
 
 //			PreparedStatement prep = dbConn.prepareStatement("BACKUP TO 'bookKeeping.bak'");
 			prep.execute();

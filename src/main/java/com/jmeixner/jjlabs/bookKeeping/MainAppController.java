@@ -42,7 +42,15 @@ public class MainAppController implements Initializable {
 
 	@FXML public void takeBackup() {
 		System.out.println("going to take a backup");
-		SimpleDbInteraction.takeBackup();
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Choose file to backup to");
+		File file = fileChooser.showSaveDialog(self);
+		if (file != null){
+			System.out.println("Lets see whats in this thing: " + file);
+			SimpleDbInteraction.takeBackup(file);
+		} else {
+			System.err.println("something went wrong the file trying to read in from is null");
+		}
 		
 	}
 
@@ -52,9 +60,8 @@ public class MainAppController implements Initializable {
 		File file = fileChooser.showOpenDialog(self);
 		if (file != null){
 			System.out.println("Lets see whats in this thing: " + file);
+			SimpleDbInteraction.restoreFromFile(file);
 		}
-
-		SimpleDbInteraction.restoreFromFile(file);
 
 		try {
 			self.setScene(AppDriver.getMainContentScene(self, getClass()));

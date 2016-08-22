@@ -17,7 +17,7 @@
       <menus>
          <Menu text="File">
             <items>
-            <MenuItem text="Backup" onAction="#takeBackup"/>
+            <MenuItem text="Backup ..." onAction="#takeBackup"/>
             <MenuItem text="Restore ..." onAction="#retore"/>
                <!-- <MenuItem text="New"/> -->
                <!-- <MenuItem text="Open"/> -->
