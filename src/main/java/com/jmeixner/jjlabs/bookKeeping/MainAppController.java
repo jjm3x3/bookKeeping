@@ -57,7 +57,7 @@ public class MainAppController implements Initializable {
 		SimpleDbInteraction.restoreFromFile(file);
 
 		try {
-			self.setScene(AppMain.getMainContentScene(self, getClass()));
+			self.setScene(AppDriver.getMainContentScene(self, getClass()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

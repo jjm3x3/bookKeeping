@@ -57,7 +57,7 @@ public class MainContentController implements Initializable{
 				@Override
 				public void handle(WindowEvent event) {
 					try {
-						AppMain.updateAccountTable(accountList);
+						AppDriver.updateAccountTable(accountList);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -97,7 +97,7 @@ public class MainContentController implements Initializable{
 				@Override
 				public void handle(WindowEvent event) {
 					try {
-						AppMain.updateAccountTable(accountList);
+						AppDriver.updateAccountTable(accountList);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -117,7 +117,7 @@ public class MainContentController implements Initializable{
 		if (new DateTime().getMillis() - when < 500){
 			System.out.println("doing something interesting");
 			int accountNumber = accountList.getSelectionModel().getFocusedIndex();
-			Dialog transactionLog = new AppMain.AccountTransactionLogDialog(accountNumber + 1);
+			Dialog transactionLog = new AppDriver.AccountTransactionLogDialog(accountNumber + 1);
 			transactionLog.showAndWait();
 		} else {
 			when = new DateTime().getMillis();
@@ -131,7 +131,7 @@ public class MainContentController implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		try {
-			AppMain.updateAccountTable(accountList);
+			AppDriver.updateAccountTable(accountList);
 		} catch (SQLException e) { //TODO again probably not the right place to do this
 			// TODO Auto-generated catch block
 			e.printStackTrace();

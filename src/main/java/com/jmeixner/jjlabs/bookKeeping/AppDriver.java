@@ -46,7 +46,7 @@ import javafx.stage.Stage;
 import models.Account;
 import models.Transaction;
 
-public class AppMain extends Application {
+public class AppDriver extends Application {
 
 	public static void main(String[] args) {
 		System.out.println("HI brenna");
@@ -67,7 +67,7 @@ public class AppMain extends Application {
 	}
 
 	static Scene getMainContentScene(Stage firstStage, Class from) throws IOException {
-		Class<? extends AppMain> myAppsClass = from;
+		Class<? extends AppDriver> myAppsClass = from;
 		System.out.println(myAppsClass.getClassLoader());
 		System.out.println(myAppsClass.getPackage());
 		URL place = myAppsClass.getResource("/MainApp.fxml");
