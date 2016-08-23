@@ -13,6 +13,8 @@ import org.h2.tools.Script;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -199,8 +201,23 @@ public class SimpleDbInteraction {
 			PreparedStatement prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + localTestFile + "');");
 			ResultSet csvRows = prep.executeQuery();
 			while(csvRows.next()){
+				LocalDate transactionDate = new LocalDate();
+				String transactionName = "";
+				double transactionAmount = 0;
 				for(int i = 1; i < csvRows.getMetaData().getColumnCount() + 1; ++i){
+					if (i == 1){
+						transactionDate = LocalDate.parse(csvRows.getString(i), DateTimeFormat.forPattern("MM/dd/yyyy"));
+						System.out.println(transactionDate.toString());
+						//date
+					} else if (i == 2) {
+						transactionAmount = csvRows.getDouble(i);
+					} else if (i == 5){
+						transactionName = csvRows.getString(i);
+					}
 					System.out.println("from Column " + i + " : " + csvRows.getString(i));
+				}
+				if (transactionAmount != 0 && !transactionName.equals("")){
+					addTransaction(transactionName, transactionAmount, accountId, transactionDate);
 				}
 			}
 			
