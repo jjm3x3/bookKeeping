@@ -60,7 +60,7 @@ public class AddAccountDialogController {
 
 		}
 		try {
-			Double.parseDouble(possibleDouble);
+			initAmount = Double.parseDouble(possibleDouble);
 			return true;
 		} catch (NumberFormatException e){
 			System.err.println("Unable to parse the startingAmount for this account");
