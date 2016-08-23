@@ -13,6 +13,8 @@ import org.joda.time.DateTime;
 import dataStore.SimpleDbInteraction;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TableView;
@@ -72,9 +74,19 @@ public class MainAppController implements Initializable {
 		}
 	}
 	
+	@FXML public void importCSV() {
+		Parent thing = (Parent) self.getScene().getRoot().getChildrenUnmodifiable().get(1);
+		Parent vbox =  (Parent) thing.getChildrenUnmodifiable().get(0);
+		TableView table = (TableView) vbox.getChildrenUnmodifiable().get(0);
+
+		int accountId = table.getSelectionModel().getFocusedIndex();
+		SimpleDbInteraction.importCsv(accountId + 1);
+	}
+
 	protected void initData(Stage self) {
 		this.self = self;
 	}
+
 
 
 }

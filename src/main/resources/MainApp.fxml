@@ -19,6 +19,7 @@
             <items>
             <MenuItem text="Backup ..." onAction="#takeBackup"/>
             <MenuItem text="Restore ..." onAction="#retore"/>
+            <MenuItem text="Import CSV ..." onAction="#importCSV"/>
                <!-- <MenuItem text="New"/> -->
                <!-- <MenuItem text="Open"/> -->
                <!-- <MenuItem text="Save"/> -->

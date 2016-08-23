@@ -189,4 +189,27 @@ public class SimpleDbInteraction {
 		} 	
 		
 	}
+
+	public static void importCsv(int accountId) {
+		Connection dbConn;
+		try {
+			dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
+			
+			String localTestFile = "/home/jmeixner/Downloads/Checking1.csv";
+			PreparedStatement prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + localTestFile + "');");
+			ResultSet csvRows = prep.executeQuery();
+			while(csvRows.next()){
+				for(int i = 1; i < csvRows.getMetaData().getColumnCount() + 1; ++i){
+					System.out.println("from Column " + i + " : " + csvRows.getString(i));
+				}
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// TODO Auto-generated method stub
+		
+	}
 }
