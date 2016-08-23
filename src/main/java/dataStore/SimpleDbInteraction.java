@@ -203,39 +203,9 @@ public class SimpleDbInteraction {
 	public static void importCsv(File file, int accountId) {
 		String tmpFileLoc = "tmpFile.del";
 		try {
-			Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
-			PreparedStatement prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + file.getAbsolutePath() + "');");
-			ResultSet csvRows = prep.executeQuery();
-			String csvHeader = "";
-			try {
-				for (int i = 0; i < csvRows.getMetaData().getColumnCount(); ++i){
-					csvHeader += "\"\"";
-					if (i != csvRows.getMetaData().getColumnCount() - 1)
-						csvHeader += ",";
-				}
-				BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
-				ArrayList<String> existingCsvContents = new ArrayList();
-				existingCsvContents.add(csvHeader);
-				String line;
-				while ((line = reader.readLine()) != null){
-					existingCsvContents.add(line);
-				}
-				reader.close();
-				
-
-				BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFileLoc));
-				for (String row : existingCsvContents){
-					writer.write(row + "\n");
-				}
-				writer.close();
-
-			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 			
+			PreparedStatement prep;
+			ResultSet csvRows;
+			Connection dbConn = addCsvHeaderIntoFile(file, tmpFileLoc); 			
 
 //			String localTestFile = "/home/jmeixner/Downloads/Checking1.csv";
 			prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + tmpFileLoc + "');");
@@ -275,5 +245,42 @@ public class SimpleDbInteraction {
 		}
 		// TODO Auto-generated method stub
 		
+	}
+
+	private static Connection addCsvHeaderIntoFile(File file, String tmpFileLoc) throws SQLException {
+		Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
+		PreparedStatement prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + file.getAbsolutePath() + "');");
+		ResultSet csvRows = prep.executeQuery();
+		String csvHeader = "";
+		try {
+			for (int i = 0; i < csvRows.getMetaData().getColumnCount(); ++i){
+				csvHeader += "\"\"";
+				if (i != csvRows.getMetaData().getColumnCount() - 1)
+					csvHeader += ",";
+			}
+			BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
+			ArrayList<String> existingCsvContents = new ArrayList();
+			existingCsvContents.add(csvHeader);
+			String line;
+			while ((line = reader.readLine()) != null){
+				existingCsvContents.add(line);
+			}
+			reader.close();
+			
+
+			BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFileLoc));
+			for (String row : existingCsvContents){
+				writer.write(row + "\n");
+			}
+			writer.close();
+
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return dbConn;
 	}
 }
