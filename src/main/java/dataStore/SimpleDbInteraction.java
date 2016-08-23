@@ -1,13 +1,21 @@
 package dataStore;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
 import org.h2.tools.RunScript;
 import org.h2.tools.Script;
 
@@ -192,14 +200,46 @@ public class SimpleDbInteraction {
 		
 	}
 
-	public static void importCsv(int accountId) {
-		Connection dbConn;
+	public static void importCsv(File file, int accountId) {
+		String tmpFileLoc = "tmpFile.del";
 		try {
-			dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
-			
-			String localTestFile = "/home/jmeixner/Downloads/Checking1.csv";
-			PreparedStatement prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + localTestFile + "');");
+			Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
+			PreparedStatement prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + file.getAbsolutePath() + "');");
 			ResultSet csvRows = prep.executeQuery();
+			String csvHeader = "";
+			try {
+				for (int i = 0; i < csvRows.getMetaData().getColumnCount(); ++i){
+					csvHeader += "\"\"";
+					if (i != csvRows.getMetaData().getColumnCount() - 1)
+						csvHeader += ",";
+				}
+				BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
+				ArrayList<String> existingCsvContents = new ArrayList();
+				existingCsvContents.add(csvHeader);
+				String line;
+				while ((line = reader.readLine()) != null){
+					existingCsvContents.add(line);
+				}
+				reader.close();
+				
+
+				BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFileLoc));
+				for (String row : existingCsvContents){
+					writer.write(row + "\n");
+				}
+				writer.close();
+
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 			
+
+//			String localTestFile = "/home/jmeixner/Downloads/Checking1.csv";
+			prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + tmpFileLoc + "');");
+			csvRows = prep.executeQuery();
 			while(csvRows.next()){
 				LocalDate transactionDate = new LocalDate();
 				String transactionName = "";
@@ -219,6 +259,13 @@ public class SimpleDbInteraction {
 				if (transactionAmount != 0 && !transactionName.equals("")){
 					addTransaction(transactionName, transactionAmount, accountId, transactionDate);
 				}
+			}
+
+			try {
+				Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", "rm " + tmpFileLoc});
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 			

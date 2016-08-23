@@ -66,21 +66,32 @@ public class MainAppController implements Initializable {
 			SimpleDbInteraction.restoreFromFile(file);
 		}
 
-		try {
-			self.setScene(AppDriver.getMainContentScene(self, getClass()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		refreshAccountTable();
 	}
 	
 	@FXML public void importCSV() {
 		Parent thing = (Parent) self.getScene().getRoot().getChildrenUnmodifiable().get(1);
 		Parent vbox =  (Parent) thing.getChildrenUnmodifiable().get(0);
 		TableView table = (TableView) vbox.getChildrenUnmodifiable().get(0);
+		
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Choose a *.csv file");
+		File file = fileChooser.showOpenDialog(self);
 
 		int accountId = table.getSelectionModel().getFocusedIndex();
-		SimpleDbInteraction.importCsv(accountId + 1);
+		SimpleDbInteraction.importCsv(file, accountId + 1);
+		
+		
+		refreshAccountTable();
+	}
+
+	private void refreshAccountTable() {
+		try {
+			self.setScene(AppDriver.getMainContentScene(self, getClass()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	protected void initData(Stage self) {
