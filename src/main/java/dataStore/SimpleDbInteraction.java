@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.h2.tools.RunScript;
 import org.h2.tools.Script;
@@ -203,29 +205,24 @@ public class SimpleDbInteraction {
 	public static void importCsv(File file, int accountId) {
 		String tmpFileLoc = "tmpFile.del";
 		try {
-			PreparedStatement prep;
-			ResultSet csvRows;
-			Connection dbConn = addCsvHeaderIntoFile(file, tmpFileLoc); 			
+			Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
+			addCsvHeaderIntoFile(file, tmpFileLoc); 			
 
 //			String localTestFile = "/home/jmeixner/Downloads/Checking1.csv";
-			prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + tmpFileLoc + "');");
-			csvRows = prep.executeQuery();
+			PreparedStatement prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + tmpFileLoc + "');");
+			ResultSet csvRows = prep.executeQuery();
 			while(csvRows.next()){
+				Map<String,Integer> csvMap = new HashMap<String,Integer>();
+				csvMap.put("date", 1);
+				csvMap.put("amount", 2);
+				csvMap.put("name", 5);
 				LocalDate transactionDate = new LocalDate();
 				String transactionName = "";
 				double transactionAmount = 0;
-				for(int i = 1; i < csvRows.getMetaData().getColumnCount() + 1; ++i){
-					if (i == 1){
-						transactionDate = LocalDate.parse(csvRows.getString(i), DateTimeFormat.forPattern("MM/dd/yyyy"));
-						System.out.println(transactionDate.toString());
-						//date
-					} else if (i == 2) {
-						transactionAmount = csvRows.getDouble(i);
-					} else if (i == 5){
-						transactionName = csvRows.getString(i);
-					}
-					System.out.println("from Column " + i + " : " + csvRows.getString(i));
-				}
+				transactionDate = LocalDate.parse(csvRows.getString(csvMap.get("date")), DateTimeFormat.forPattern("MM/dd/yyyy"));
+				transactionAmount = csvRows.getDouble(csvMap.get("amount"));
+				transactionName = csvRows.getString(csvMap.get("name"));
+
 				if (transactionAmount != 0 && !transactionName.equals("")){
 					addTransaction(transactionName, transactionAmount, accountId, transactionDate);
 				}
@@ -247,7 +244,7 @@ public class SimpleDbInteraction {
 		
 	}
 
-	private static Connection addCsvHeaderIntoFile(File file, String tmpFileLoc) throws SQLException {
+	private static void addCsvHeaderIntoFile(File file, String tmpFileLoc) throws SQLException {
 		Connection dbConn = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
 		PreparedStatement prep = dbConn.prepareStatement("SELECT * FROM CSVREAD('" + file.getAbsolutePath() + "');");
 		ResultSet csvRows = prep.executeQuery();
@@ -281,6 +278,5 @@ public class SimpleDbInteraction {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return dbConn;
 	}
 }
